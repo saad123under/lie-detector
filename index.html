@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lie Detector Test</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Lie Detector Test</h1>
+    <p>Answer the questions truthfully or face the consequences!</p>
+    
+    <div class="question">
+      <label for="question1">1. Is your name John?</label>
+      <select id="question1">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+
+    <div class="question">
+      <label for="question2">2. Have you ever lied?</label>
+      <select id="question2">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+
+    <div class="question">
+      <label for="question3">3. Do you like this website?</label>
+      <select id="question3">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+
+    <button id="submitBtn">Submit Answers</button>
+
+    <div id="result" class="result">
+      <h2>Result:</h2>
+      <p id="resultText">Take the test to see if you're lying!</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
