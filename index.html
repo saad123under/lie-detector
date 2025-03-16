@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détecteur de Mensonges</title>
+  <style>
+    /* Fond par défaut (nuances de noir et bleu) */
+    body {
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a, #1a1a2e); /* Noir et bleu foncé */
+      transition: background 0.5s ease; /* Transition fluide */
+    }
+
+    /* Fond vert pour la vérité */
+    body.truth {
+      background: linear-gradient(135deg, #1a2e1a, #2ed573); /* Vert foncé et vert clair */
+    }
+
+    /* Fond rouge pour le mensonge */
+    body.lie {
+      background: linear-gradient(135deg, #2e1a1a, #ff4757); /* Rouge foncé et rouge clair */
+    }
+
+    .wrapper {
+      display: flex;
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.1); /* Fond semi-transparent */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px); /* Effet de flou */
+    }
+
+    .history {
+      width: 250px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .history h2 {
+      margin-top: 0;
+      color: #fff;
+    }
+
+    .history ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .history li {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .history li:last-child {
+      border-bottom: none;
+    }
+
+    .container {
+      text-align: center;
+      width: 100%;
+    }
+
+    h1 {
+      color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      margin-top: 10px;
+      font-size: 16px;
+      resize: vertical;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    button {
+      background-color: #ff4757;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff6b81;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    #resultText {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .bulb {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 20px auto;
+      background-color: rgba(255, 255, 255, 0.1); /* Couleur par défaut (éteinte) */
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .bulb.red {
+      background-color: #ff4757; /* Rouge pour un mensonge */
+      box-shadow: 0 0 20px rgba(255, 71, 87, 0.8);
+    }
+
+    .bulb.green {
+      background-color: #2ed573; /* Vert pour une vérité */
+      box-shadow: 0 0 20px rgba(46, 213, 115, 0.8);
+    }
+
+    .description {
+      width: 250px;
+      text-align: center;
+    }
+
+    .description p {
+      font-size: 18px;
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Historique à gauche -->
+    <div class="history">
+      <h2>Historique</h2>
+      <ul id="historyList"></ul>
+    </div>
+
+    <!-- Détecteur de Mensonges au centre -->
+    <div class="container">
+      <h1>Détecteur de Mensonges</h1>
+      <p>Écrivez une phrase, et nous déterminerons si c'est un mensonge ou une vérité.</p>
+      
+      <textarea id="userInput" placeholder="Écrivez votre phrase ici..." rows="4"></textarea>
+      <button id="submitBtn">Analyser</button>
+
+      <!-- Ampoule -->
+      <div class="bulb" id="bulb"></div>
+
+      <div id="result" class="result">
+        <h2>Résultat :</h2>
+        <p id="resultText">Attendez votre analyse...</p>
+      </div>
+    </div>
+
+    <!-- Description à droite -->
+    <div class="description">
+      <p>C'est juste aléatoire 🤣</p>
+    </div>
+  </div>
+
+  <script>
+    const historyList = document.getElementById('historyList');
+    const body = document.body;
+
+    document.getElementById('submitBtn').addEventListener('click', function () {
+      const userInput = document.getElementById('userInput').value.trim();
+      const resultText = document.getElementById('resultText');
+      const bulb = document.getElementById('bulb');
+
+      if (!userInput) {
+        resultText.textContent = "Veuillez écrire une phrase !";
+        resultText.style.color = "red";
+        bulb.className = "bulb"; // Réinitialiser l'ampoule
+        body.className = ""; // Réinitialiser le fond
+        return;
+      }
+
+      // Simuler une analyse aléatoire
+      const isTruth = Math.random() < 0.5; // 50% de chance d'être vrai ou faux
+      const result = isTruth ? "Vérité" : "Mensonge";
+
+      if (isTruth) {
+        resultText.textContent = "C'est une vérité !";
+        resultText.style.color = "#2ed573";
+        bulb.className = "bulb green"; // Allumer l'ampoule en vert
+        body.className = "truth"; // Fond vert
+      } else {
+        resultText.textContent = "C'est un mensonge !";
+        resultText.style.color = "#ff4757";
+        bulb.className = "bulb red"; // Allumer l'ampoule en rouge
+        body.className = "lie"; // Fond rouge
+      }
+
+      // Ajouter à l'historique
+      const historyItem = document.createElement('li');
+      historyItem.textContent = `${userInput} - ${result}`;
+      historyList.appendChild(historyItem);
+
+      // Vider le champ de texte
+      document.getElementById('userInput').value = '';
+    });
+  </script>
+</body>
+</html>
